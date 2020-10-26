@@ -10,6 +10,9 @@ DROP TABLE UnidadMedida;
 DROP TABLE Mesa;
 DROP TABLE Usuario;
 DROP TABLE Rol;
+DROP TABLE DetallePedidoInsumo;
+DROP TABLE PedidoInsumo;
+DROP TABLE EstadoPedidoInsumo;
 
 -- SCHEMA CREATION
 CREATE TABLE Rol (
@@ -113,7 +116,33 @@ Create TABLE DetalleReceta(
     CONSTRAINT PK_DetalleReceta PRIMARY KEY (RecetaId, ProductoId),
     CONSTRAINT FK_DetalleReceta_Receta FOREIGN KEY (RecetaId) REFERENCES Receta(Id),
     CONSTRAINT FK_DetalleReceta_Producto FOREIGN KEY (ProductoId) REFERENCES Producto(Id)
-);   
+);
+
+Create TABLE EstadoPedidoInsumo(
+    Id INTEGER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+    Descripcion VARCHAR2(20) NOT NULL,
+    CONSTRAINT PK_EstadoPedido PRIMARY KEY (Id)
+);  
+
+Create TABLE PedidoInsumo(
+    Id INTEGER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+    ProveedorId INTEGER NOT NULL,
+    EstadoPedidoId INTEGER NOT NULL,
+    Activo NUMBER(1) NOT NULL,
+    CONSTRAINT PK_PedidoI PRIMARY KEY (Id),
+    CONSTRAINT FK_PedidoI_Proveedor FOREIGN KEY (ProveedorId) REFERENCES Proveedor(Id),
+    CONSTRAINT FK_PedidoI_Producto FOREIGN KEY (EstadoPedidoId) REFERENCES EstadoPedidoInsumo(Id)
+); 
+
+Create TABLE DetallePedidoInsumo(
+    PedidoInsumo INTEGER NOT NULL,
+    ProductoId INTEGER NOT NULL,
+    Cantidad NUMBER(8,3) NOT NULL,
+    Activo NUMBER(1) NOT NULL,
+    CONSTRAINT PK_DetallePedidoI PRIMARY KEY (PedidoInsumo, ProductoId),
+    CONSTRAINT FK_DetallePedidoI_PedidoInsumo FOREIGN KEY (RecetaId) REFERENCES PedidoInsumo(Id),
+    CONSTRAINT FK_DetallePedidoI_Producto FOREIGN KEY (ProductoId) REFERENCES Producto(Id)
+); 
 
 -- INSERTS
 INSERT INTO Rol (Descripcion) VALUES ('Administrador');
